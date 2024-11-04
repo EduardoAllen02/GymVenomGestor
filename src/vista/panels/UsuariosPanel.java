@@ -83,7 +83,8 @@ public class UsuariosPanel extends JPanel {
         addButton.setBackground(new Color(34, 139, 34));
         addButton.setForeground(Color.WHITE);
         addButton.addActionListener(e -> {
-          new RegistrarUsuarioDialog(servicioUsuario); // Abre el diálogo de registro  
+        new RegistrarUsuarioDialog((Frame) SwingUtilities.getWindowAncestor(this), servicioUsuario);
+        cargarDatosUsuarios(); // Recargar la tabla después de registrar un nuevo usuario
         });
 
         JPanel buttonPanel = new JPanel();
