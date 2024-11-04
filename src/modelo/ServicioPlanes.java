@@ -9,7 +9,7 @@ public class ServicioPlanes {
     // Método para obtener todos los planes
     public List<Plan> obtenerPlanes() {
         List<Plan> planes = new ArrayList<>();
-        String query = "SELECT * FROM planes";
+        String query = "SELECT * FROM plan";
 
         try (Connection conn = ConexionBd.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query);
