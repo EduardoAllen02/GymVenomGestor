@@ -91,19 +91,18 @@ public class ServicioUsuarios {
         }
         return null;
     }
-    // Método para agregar un nuevo usuario
 public boolean agregarUsuario(Usuario usuario) {
     String query = "INSERT INTO usuarios (Nombre, Apellido, TelUsuario, TelEmergencia1, TelEmergencia2, FechaNacimiento) VALUES (?, ?, ?, ?, ?, ?)";
     try (Connection conn = ConexionBd.getConnection();
          PreparedStatement stmt = conn.prepareStatement(query)) {
-        
+
         stmt.setString(1, usuario.getNombre());
         stmt.setString(2, usuario.getApellido());
         stmt.setString(3, usuario.getTelUsuario());
         stmt.setString(4, usuario.getTelEmergencia1());
         stmt.setString(5, usuario.getTelEmergencia2());
-        stmt.setDate(6, java.sql.Date.valueOf(usuario.getFechaNacimiento())); // Convertir LocalDate a java.sql.Date
-        
+        stmt.setDate(6, java.sql.Date.valueOf(usuario.getFechaNacimiento()));
+
         return stmt.executeUpdate() > 0;
     } catch (SQLException e) {
         e.printStackTrace();
