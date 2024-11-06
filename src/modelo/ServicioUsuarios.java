@@ -109,4 +109,97 @@ public boolean agregarUsuario(Usuario usuario) {
         return false;
     }
 }
+  // Método para obtener usuarios filtrados por nombre
+public List<Usuario> obtenerUsuariosPorNombre(String nombre) {
+    List<Usuario> usuarios = new ArrayList<>();
+    StringBuilder query = new StringBuilder("SELECT * FROM usuarios WHERE 1=1");
+
+    if (nombre != null && !nombre.isEmpty()) {
+        query.append(" AND Nombre LIKE ?");
+    }
+
+    try (Connection conn = ConexionBd.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(query.toString())) {
+
+        int index = 1;
+        if (nombre != null && !nombre.isEmpty()) {
+            stmt.setString(index, "%" + nombre + "%");
+        }
+
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            Usuario usuario = new Usuario(
+                rs.getInt("IdUsuario"),
+                rs.getString("Nombre"),
+                rs.getString("Apellido"),
+                rs.getString("TelUsuario"),
+                rs.getString("TelEmergencia1"),
+                rs.getString("TelEmergencia2"),
+                rs.getDate("FechaNacimiento").toLocalDate()
+            );
+            usuarios.add(usuario);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return usuarios;
+}
+
+// Método para obtener usuarios filtrados por estado de membresía
+public List<Usuario> obtenerUsuariosPorEstadoMembresia(String estadoMembresia) {
+    List<Usuario> usuarios = new ArrayList<>();
+    StringBuilder query = new StringBuilder("SELECT u.* FROM usuarios u LEFT JOIN membresia m ON u.IdUsuario = m.IdUsuario WHERE 1=1");
+
+    if (estadoMembresia != null && !estadoMembresia.equals("AMBAS")) {
+        query.append(" AND m.Estado = ?");
+    }
+
+    try (Connection conn = ConexionBd.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(query.toString())) {
+
+        if (estadoMembresia != null && !estadoMembresia.equals("AMBAS")) {
+            stmt.setString(1, estadoMembresia);
+        }
+
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            Usuario usuario = new Usuario(
+                rs.getInt("IdUsuario"),
+                rs.getString("Nombre"),
+                rs.getString("Apellido"),
+                rs.getString("TelUsuario"),
+                rs.getString("TelEmergencia1"),
+                rs.getString("TelEmergencia2"),
+                rs.getDate("FechaNacimiento").toLocalDate()
+            );
+            usuarios.add(usuario);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return usuarios;
+  }
+// Método para obtener el estado de la membresía de un usuario específico por ID
+public String obtenerEstadoMembresia(int idUsuario) {
+    String estadoMembresia = null;
+    String query = "SELECT Estado FROM membresia WHERE IdUsuario = ?";
+
+    try (Connection conn = ConexionBd.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(query)) {
+
+        stmt.setInt(1, idUsuario);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            estadoMembresia = rs.getString("Estado");
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return estadoMembresia;
+}
+
 }
